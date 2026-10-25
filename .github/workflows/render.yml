@@ -89,21 +89,37 @@ jobs:
         working-directory: engine
         run: npm ci --no-audit --no-fund
 
+      # On failure, the tail of the log is posted as an annotation (visible on the run page and via the public API).
       - name: Build voice + music
         working-directory: engine
+        env:
+          REQUIRE_CLONE: ${{ inputs.voice != 'stock' && '1' || '' }}
+          PYTHONUNBUFFERED: "1"
         run: |
+          set -o pipefail
           for s in ${{ steps.pick.outputs.slugs }}; do
             echo "::group::audio $s"
-            python scripts/build_audio.py "$s"
+            if ! python scripts/build_audio.py "$s" 2>&1 | tee /tmp/audio.log; then
+              echo "::endgroup::"
+              msg=$(grep -vE 'Warning|warn\(|it/s\]|s/it\]' /tmp/audio.log | tail -n 30 | sed -e 's/%/%25/g' -e 's/\r//g' | sed ':a;N;$!ba;s/\n/%0A/g')
+              echo "::error title=Audio failed for $s::$msg"
+              exit 1
+            fi
             echo "::endgroup::"
           done
 
       - name: Render videos
         working-directory: engine
         run: |
+          set -o pipefail
           for s in ${{ steps.pick.outputs.slugs }}; do
             echo "::group::render $s"
-            node scripts/render.mjs "$s"
+            if ! node scripts/render.mjs "$s" 2>&1 | tee /tmp/render.log; then
+              echo "::endgroup::"
+              msg=$(grep -vE '^\s+at |Rendered|Encoded' /tmp/render.log | tail -n 30 | sed -e 's/%/%25/g' -e 's/\r//g' | sed ':a;N;$!ba;s/\n/%0A/g')
+              echo "::error title=Render failed for $s::$msg"
+              exit 1
+            fi
             echo "::endgroup::"
           done
 

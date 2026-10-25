@@ -110,6 +110,11 @@ async def main(slug):
     own_voice = os.path.join(REELS, slug, "voice")
     os.makedirs(out_dir, exist_ok=True)
     cloned = clone_lines(spec, slug)
+    if os.environ.get("REQUIRE_CLONE") and spec.get("engine") != "edge":
+        missing = [b["id"] for b in spec["beats"]
+                   if b["id"] not in cloned and not os.path.exists(os.path.join(own_voice, f"{b['id']}.wav"))]
+        if missing:
+            sys.exit(f"Voice clone missing for {missing}; refusing to fall back to the stock voice (REQUIRE_CLONE).")
 
     t, beats = 0.0, []
     for i, b in enumerate(spec["beats"]):
