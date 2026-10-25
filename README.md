@@ -11,7 +11,8 @@ and commits the finished MP4 back to `out/`.
 3. The video appears in [`out/`](out/) (and as a download on the Actions run).
 
 **It's a queue.** Every run renders ONE reel: the first script without a video in `out/`.
-Runs happen on every push and **every hour** (`:17`), so a batch of scripts finishes overnight, one per hour.
+A push starts the queue; each finished run waits 15 minutes and starts the next, until the queue is empty
+(an hourly schedule at `:17` is a backup). A batch of scripts finishes overnight, one reel at a time.
 - Re-render a reel: delete its `out/<slug>.mp4`, or **Actions → Render reels → Run workflow** with its slug.
 - A reel that fails is added to `out/FAILED.txt` and skipped; the error is on the run page. Remove the line to retry.
 - Pick `stock` voice when running by hand for a fast preview.

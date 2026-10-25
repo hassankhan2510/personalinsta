@@ -23,6 +23,7 @@ on:
 
 permissions:
   contents: write
+  actions: write   # lets a finished run start the next one (scheduled runs alone are best-effort on GitHub)
 
 concurrency:
   group: render
@@ -154,3 +155,23 @@ jobs:
           name: ${{ steps.pick.outputs.slug }}
           path: out/*.mp4
           if-no-files-found: ignore
+
+      # Chain: if reels are still queued, pause, then start the next run. Doesn't depend on cron firing.
+      - name: Queue the next reel
+        if: always() && steps.pick.outputs.slug != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git pull -q origin main || true
+          left=0
+          for f in reels/*.json; do
+            s=$(basename "$f" .json)
+            [ -f "out/$s.mp4" ] && continue
+            grep -qx "$s" out/FAILED.txt 2>/dev/null && continue
+            left=$((left + 1))
+          done
+          echo "Reels still queued: $left"
+          if [ "$left" -gt 0 ]; then
+            sleep 900
+            gh workflow run render.yml --repo "$GITHUB_REPOSITORY" --ref main
+          fi
