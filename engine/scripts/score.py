@@ -161,7 +161,10 @@ def make_mix(tl, public_dir, out_path):
     for b in beats:
         with wave.open(os.path.join(public_dir, b["file"])) as w:
             x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(np.float64) / 32768
-        i = int(b["fileStart"] * SR); n = min(len(x), N - i); vo[i:i + n] += x[:n]
+        i = int(b["fileStart"] * SR)
+        if i < 0:  # file's leading silence is longer than the gap before it: drop that silence
+            x, i = x[-i:], 0
+        n = min(len(x), N - i); vo[i:i + n] += x[:n]
     vo = hp(vo, 85)
     vo = vo / (np.abs(vo).max() + 1e-9) * 0.9
 
