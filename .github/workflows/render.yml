@@ -32,7 +32,7 @@ jobs:
     env:
       HF_HUB_CACHE: ${{ github.workspace }}/.cache/hf/hub
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -57,11 +57,11 @@ jobs:
       - name: System packages
         run: sudo apt-get update -q && sudo apt-get install -yq ffmpeg
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: "22"
           cache: npm
@@ -120,7 +120,7 @@ jobs:
 
       - name: Also attach videos to this run
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: reels
           path: out/*.mp4
