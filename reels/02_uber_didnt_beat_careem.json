@@ -1,0 +1,22 @@
+{
+  "title": "Uber didn't beat Careem. It bought it.",
+  "tail": 2.4,
+  "beats": [
+    { "id": "hook",  "gap": 0.15, "layout": "stat", "value": "$3.1B", "label": "UBER × CAREEM · 2019",
+      "text": "Uber didn't beat Careem. It bought it.", "em": ["bought"] },
+    { "id": "file",  "gap": 0.35, "layout": "title", "kicker": "THE FILE",
+      "text": "A Dubai startup from 2012. The Middle East's first tech unicorn.", "em": ["first", "unicorn."] },
+    { "id": "how",   "gap": 0.30, "layout": "title",
+      "text": "Here's how they made a giant pay up.", "em": ["pay", "up."] },
+    { "id": "n1",    "gap": 0.35, "layout": "number", "num": "01", "label": "CASH", "kicker": "HOW CAREEM WON",
+      "text": "One. Cash. Most riders didn't have cards. So they took cash.", "em": ["cash."] },
+    { "id": "n2",    "gap": 0.35, "layout": "number", "num": "02", "label": "CAPTAINS", "kicker": "HOW CAREEM WON",
+      "text": "Two. Captains, not drivers. Local people, local support, local language.", "em": ["Captains,", "local"] },
+    { "id": "n3",    "gap": 0.35, "layout": "number", "num": "03", "label": "PATIENCE", "kicker": "HOW CAREEM WON",
+      "text": "Three. Seven years building markets the giants treated as an afterthought.", "em": ["Seven", "afterthought."] },
+    { "id": "twist", "gap": 0.65, "layout": "title", "kicker": "THE LESSON", "twist": true,
+      "text": "You don't out-spend a giant. You out-understand the customer.", "em": ["out-understand"] },
+    { "id": "cta",   "gap": 0.40, "layout": "cta", "action": "SEND THIS", "sub": "to someone building in Pakistan",
+      "text": "Send this to someone building for Pakistan.", "em": ["send"] }
+  ]
+}

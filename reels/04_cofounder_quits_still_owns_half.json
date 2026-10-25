@@ -1,0 +1,25 @@
+{
+  "title": "Your co-founder quits. Still owns half.",
+  "tail": 2.4,
+  "beats": [
+    { "id": "hook",  "gap": 0.15, "layout": "title", "kicker": "50 / 50 SPLIT",
+      "text": "Your co-founder quits after six months. He still owns half.", "em": ["quits", "half."] },
+    { "id": "day1",  "gap": 0.40, "layout": "chat", "contact": "Ali · co-founder",
+      "msgs": [["them", "bro let's build this together"], ["me", "50/50?"], ["them", "deal"]],
+      "text": "Day one. You split it fifty fifty.", "em": ["fifty"] },
+    { "id": "later", "gap": 0.35, "layout": "chat",
+      "msgs": [["them", "got a job offer"], ["them", "i'm out"], ["me", "and your 50%??"], ["them", "still mine"]],
+      "text": "Six months later, he's out. You build the rest alone.", "em": ["alone."] },
+    { "id": "fix",   "gap": 0.40, "layout": "versus",
+      "left": { "label": "WITHOUT VESTING", "value": "50% on day one" },
+      "right": { "label": "WITH VESTING", "value": "Earned over 4 years" },
+      "split": 3,
+      "text": "The fix is vesting. Shares are earned over four years.", "em": ["vesting.", "earned"] },
+    { "id": "cliff", "gap": 0.35, "layout": "stat", "value": "0%", "label": "IF HE LEAVES BEFORE THE 1-YEAR CLIFF",
+      "text": "Leave before year one? You leave with nothing.", "em": ["nothing."] },
+    { "id": "twist", "gap": 0.65, "layout": "title", "kicker": "THE LESSON", "twist": true,
+      "text": "Friendship is not a legal agreement.", "em": ["not", "legal"] },
+    { "id": "cta",   "gap": 0.40, "layout": "cta", "action": "SAVE THIS", "sub": "before you pick a co-founder",
+      "text": "Save this before you pick a co-founder.", "em": ["save"] }
+  ]
+}

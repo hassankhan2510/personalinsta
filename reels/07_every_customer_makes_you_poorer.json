@@ -1,0 +1,25 @@
+{
+  "title": "Every new customer is making you poorer",
+  "tail": 2.4,
+  "beats": [
+    { "id": "hook",  "gap": 0.15, "layout": "title", "kicker": "UNIT ECONOMICS",
+      "text": "Every new customer is making you poorer.", "em": ["poorer."] },
+    { "id": "math",  "gap": 0.35, "layout": "title",
+      "text": "Here's the math most founders skip.", "em": ["skip."] },
+    { "id": "vs",    "gap": 0.35, "layout": "versus",
+      "left": { "label": "COST TO GET ONE CUSTOMER", "value": "Rs 1,000" },
+      "right": { "label": "WHAT THAT CUSTOMER PAYS", "value": "Rs 800" },
+      "split": 8,
+      "text": "Getting a customer costs you a thousand rupees. They pay you eight hundred.", "em": ["thousand", "eight"] },
+    { "id": "per",   "gap": 0.35, "layout": "stat", "value": "-Rs 200", "label": "PER CUSTOMER",
+      "text": "That's minus two hundred. Every single time.", "em": ["minus"] },
+    { "id": "scale", "gap": 0.35, "layout": "title",
+      "text": "Now grow to a hundred thousand customers.", "em": ["hundred", "thousand"] },
+    { "id": "lost",  "gap": 0.35, "layout": "stat", "value": "-Rs 20,000,000", "label": "LOST BY GROWING",
+      "text": "You just lost two crore rupees. By growing.", "em": ["lost", "growing."] },
+    { "id": "twist", "gap": 0.65, "layout": "photo", "photo": "photos/hassan_stage.jpg", "chip": "THE RULE", "big": true, "twist": true,
+      "text": "Growth only counts when each customer makes you money.", "em": ["makes", "money."] },
+    { "id": "cta",   "gap": 0.40, "layout": "cta", "action": "FOLLOW", "sub": "More founders' files every week",
+      "text": "Follow for more founders' files.", "em": ["follow"] }
+  ]
+}

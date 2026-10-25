@@ -34,7 +34,7 @@ SR = 48000
 
 def clone_lines(spec, slug):
     """Your cloned voice for every beat -> {beat id: wav}. Empty if the clone is off or fails."""
-    if spec.get("engine") == "edge" or not (os.path.exists(VOICE_REF) and os.path.exists(VENV_PY)):
+    if spec.get("engine") == "edge" or os.environ.get("VOICE") == "stock" or not (os.path.exists(VOICE_REF) and os.path.exists(VENV_PY)):
         return {}
     cache = os.path.join(REELS, slug, ".clone")
     os.makedirs(cache, exist_ok=True)

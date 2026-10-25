@@ -1,12 +1,12 @@
-# Reel 01: Investors don't fund ideas
+# 01_investors_dont_fund_ideas
 
-Video: `out/01_investors_dont_fund_ideas.mp4` (28.8 s, 1080×1920)
+Video: `out/01_investors_dont_fund_ideas.mp4`
 
-## Cover text (pick the frame at 0.5 s or upload a custom cover)
+## Cover text
 INVESTORS DON'T FUND IDEAS.
 
 ## Caption
-Investors don't fund ideas. They fund evidence. 👇
+Investors don't fund ideas. They fund evidence.
 
 1️⃣ Speed: what did you ship in the last 30 days?
 2️⃣ Proof: someone using it, or better, paying for it.
@@ -14,15 +14,13 @@ Investors don't fund ideas. They fund evidence. 👇
 
 Your idea is the least important slide in your deck.
 
-Bookings for next semester are open. Comment TALK.
-
 Save this before your next pitch. Send it to the friend who's "still working on the idea."
 
-#startups #founders #pakistanstartups #entrepreneurship #cohortzero
+#startups #founders #pitchdeck #entrepreneurship #cohortzero
 
 ## Posting checklist
-- Post as a Reel (not a post) with "Also share to feed" ON
-- Use **Collab** to invite @cohortzero as collaborator (puts it in front of both audiences)
-- Turn on **Trial reel** if you want it shown to non-followers first
-- Add the topic tags: Entrepreneurship, Startups
-- Reply to every comment in the first 60 minutes. DM everyone who comments TALK with your speaker kit link
+- Post as a Reel with "Also share to feed" ON
+- Cover: pick the first frame (the hook is on it), or use the cover text above
+- **Collab** with @cohortzero so it reaches both audiences
+- Optional: add a trending sound in Instagram at 5–10% volume under the voice
+- Reply to every comment in the first 60 minutes

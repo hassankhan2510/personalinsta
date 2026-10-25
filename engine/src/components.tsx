@@ -23,6 +23,7 @@ export const FontFaces: React.FC = () => (
     @font-face { font-family: 'HK Black'; src: url('${staticFile("fonts/Inter-Var.ttf")}'); font-weight: 900; }
     @font-face { font-family: 'HK Bahn'; src: url('${staticFile("fonts/Barlow-Medium.ttf")}'); font-weight: 400; }
     @font-face { font-family: 'HK Bahn'; src: url('${staticFile("fonts/Barlow-Bold.ttf")}'); font-weight: 700; }
+    @font-face { font-family: 'HK Text'; src: url('${staticFile("fonts/Inter-Var.ttf")}'); font-weight: 400 800; }
   `}</style>
 );
 
@@ -137,7 +138,7 @@ export const Karaoke: React.FC<{ b: Beat; size: number; mode?: "light" | "rise";
         const color = em ? C.hi : C.white;
         if (mode === "light") {
           return (
-            <span key={i} style={{ color: on ? color : "rgba(255,255,255,0.38)", textShadow, transform: `scale(${on ? 1 + 0.08 * (1 - p) : 1})`, display: "inline-block" }}>
+            <span key={i} style={{ color: on ? color : "rgba(255,255,255,0.62)", textShadow, transform: `scale(${on ? 1 + 0.08 * (1 - p) : 1})`, display: "inline-block" }}>
               {w.w}
             </span>
           );

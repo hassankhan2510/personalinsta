@@ -17,6 +17,7 @@ export const C = {
 export const F = {
   head: "'HK Black', 'Segoe UI', sans-serif",
   label: "'HK Bahn', 'Segoe UI', sans-serif",
+  text: "'HK Text', 'Segoe UI', sans-serif", // chat bubbles
 };
 
 /** Who's speaking. Shown on the hook name tag and the end card. */
@@ -31,7 +32,8 @@ export const BRAND = {
 };
 
 export type Word = { w: string; t: number; e: number };
-export type Layout = "face" | "title" | "number" | "photo" | "cta";
+export type Layout = "face" | "title" | "number" | "photo" | "stat" | "chat" | "versus" | "cta";
+export type Side = { label: string; value: string };
 export type Beat = {
   id: string;
   layout: Layout;
@@ -48,6 +50,15 @@ export type Beat = {
   label?: string;
   chip?: string;
   sub?: string;
+  big?: boolean; // photo: the line as a big statement instead of captions
+  twist?: boolean; // the turn of the story: music drops out, then hits
+  value?: string; // stat: "$3.1B", "-Rs 20M"
+  msgs?: ["me" | "them", string][]; // chat bubbles, spread across the line
+  contact?: string; // chat header name
+  left?: Side; // versus: the bad option (shown first)
+  right?: Side; // versus: the good option
+  split?: number; // versus: word index where the second card lands
+  action?: string; // cta: "FOLLOW", "SAVE THIS", "SEND THIS"
 };
 export type Timeline = { slug: string; title: string; total: number; beats: Beat[] };
 

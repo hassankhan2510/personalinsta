@@ -6,12 +6,17 @@ and commits the finished MP4 back to `out/`.
 
 ## Make a reel
 
-1. Copy `reels/01_investors_dont_fund_ideas.json` to `reels/02_your_topic.json` and edit the lines.
+1. Copy any `reels/*.json` to `reels/08_your_topic.json` and edit the lines.
 2. Commit and push. That's it.
-3. About 15–25 minutes later the video appears in [`out/`](out/) (and as a download on the Actions run).
+3. The video appears in [`out/`](out/) (and as a download on the Actions run).
 
-Run it by hand: **Actions → Render reels → Run workflow**. Leave the slug blank to re-render everything,
-or pick `stock` voice for a fast preview.
+**It's a queue.** Every run renders ONE reel: the first script without a video in `out/`.
+Runs happen on every push and **every hour** (`:17`), so a batch of scripts finishes overnight, one per hour.
+- Re-render a reel: delete its `out/<slug>.mp4`, or **Actions → Render reels → Run workflow** with its slug.
+- A reel that fails is added to `out/FAILED.txt` and skipped; the error is on the run page. Remove the line to retry.
+- Pick `stock` voice when running by hand for a fast preview.
+
+Layouts: `face` · `title` · `number` · `photo` (+`big`) · `stat` (counting number) · `chat` (text bubbles) · `versus` · `cta`.
 
 ## What's where
 

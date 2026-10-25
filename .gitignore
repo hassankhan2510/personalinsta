@@ -12,6 +12,7 @@ reels/*/.clone/jobs.json
 # Only finished videos live in out/
 out/*
 !out/*.mp4
+!out/FAILED.txt
 
 # Raw phone photos (processed copies are in engine/public/photos)
 /IMG-*.jpg

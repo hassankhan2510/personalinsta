@@ -1,0 +1,25 @@
+{
+  "title": "Your AI startup is one update from dying",
+  "tail": 2.4,
+  "beats": [
+    { "id": "hook",  "gap": 0.15, "layout": "face", "photo": "photos/hassan_portrait.jpg",
+      "text": "Your AI startup is one model update away from dying.", "em": ["one", "dying."] },
+    { "id": "why",   "gap": 0.35, "layout": "title", "kicker": "THE WRAPPER PROBLEM",
+      "text": "If your product is a prompt on someone else's model, you own nothing.", "em": ["nothing."] },
+    { "id": "vs",    "gap": 0.35, "layout": "versus",
+      "left": { "label": "WRAPPER", "value": "Their model. Their rules." },
+      "right": { "label": "MOAT", "value": "Your data. Your users." },
+      "split": 4,
+      "text": "The model is rented. What you can own is everything around it.", "em": ["rented.", "own"] },
+    { "id": "n1",    "gap": 0.35, "layout": "number", "num": "01", "label": "DATA", "kicker": "WHAT YOU CAN OWN",
+      "text": "One. Data nobody else has.", "em": ["nobody"] },
+    { "id": "n2",    "gap": 0.35, "layout": "number", "num": "02", "label": "WORKFLOW", "kicker": "WHAT YOU CAN OWN",
+      "text": "Two. A workflow your users can't leave.", "em": ["can't"] },
+    { "id": "n3",    "gap": 0.35, "layout": "number", "num": "03", "label": "DISTRIBUTION", "kicker": "WHAT YOU CAN OWN",
+      "text": "Three. Distribution. A way to reach customers the giants can't copy.", "em": ["can't", "copy."] },
+    { "id": "twist", "gap": 0.65, "layout": "photo", "photo": "photos/hassan_stage.jpg", "chip": "THE RULE", "big": true, "twist": true,
+      "text": "Build the moat. Not the wrapper.", "em": ["moat."] },
+    { "id": "cta",   "gap": 0.40, "layout": "cta", "action": "SEND THIS", "sub": "to a founder building with AI",
+      "text": "Send this to a founder building with AI.", "em": ["send"] }
+  ]
+}

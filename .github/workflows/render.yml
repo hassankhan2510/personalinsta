@@ -1,15 +1,18 @@
 name: Render reels
 
-# Push a reel script (reels/<slug>.json) -> GitHub clones the voice, renders the video and
-# commits out/<slug>.mp4 back to the repo. Or run it by hand from the Actions tab.
+# A render queue. Every run renders ONE reel: the first reels/<slug>.json that has no out/<slug>.mp4 yet.
+# It runs every hour on a schedule (so a batch of scripts finishes overnight), on every push, or by hand.
+# To re-render a reel: delete its out/<slug>.mp4, or run by hand with its slug.
 on:
+  schedule:
+    - cron: "17 * * * *"   # hourly at :17 (UTC; GitHub may start scheduled runs a few minutes late)
   push:
     branches: [main]
     paths: ["reels/*.json", "engine/**", "voice/**", ".github/workflows/render.yml"]
   workflow_dispatch:
     inputs:
       slug:
-        description: "Reel to render, e.g. 01_investors_dont_fund_ideas (blank = all reels)"
+        description: "Reel to render, e.g. 01_investors_dont_fund_ideas (blank = next in the queue)"
         required: false
         default: ""
       voice:
@@ -33,41 +36,42 @@ jobs:
       HF_HUB_CACHE: ${{ github.workspace }}/.cache/hf/hub
     steps:
       - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
 
-      - name: Pick reels to render
+      - name: Pick the next reel
         id: pick
         env:
           INPUT_SLUG: ${{ inputs.slug }}
-          BEFORE: ${{ github.event.before }}
         run: |
-          all=$(ls reels/*.json | xargs -n1 basename | sed 's/\.json$//' | grep -v '_POST$' | tr '\n' ' ')
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            slugs="${INPUT_SLUG:-$all}"
-          elif [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ] \
-               || git diff --name-only "$BEFORE" HEAD | grep -qE '^(engine/|voice/|\.github/)'; then
-            slugs="$all"   # engine, voice or first push: everything
-          else
-            slugs=$(git diff --name-only "$BEFORE" HEAD -- 'reels/*.json' | xargs -rn1 basename | sed 's/\.json$//' | tr '\n' ' ')
-          fi
-          echo "slugs=$slugs" >> "$GITHUB_OUTPUT"
-          echo "Rendering: $slugs"
+          next=""
+          for f in reels/*.json; do
+            s=$(basename "$f" .json)
+            [ -f "out/$s.mp4" ] && continue
+            grep -qx "$s" out/FAILED.txt 2>/dev/null && continue   # failed before: skip, don't block the queue
+            next="$s"; break
+          done
+          slug="${INPUT_SLUG:-$next}"
+          echo "slug=$slug" >> "$GITHUB_OUTPUT"
+          echo "Queue: $(for f in reels/*.json; do s=$(basename "$f" .json); [ -f "out/$s.mp4" ] || printf '%s ' "$s"; done)"
+          echo "Rendering now: ${slug:-nothing, queue is empty}"
 
       - name: System packages
+        if: steps.pick.outputs.slug != ''
         run: sudo apt-get update -q && sudo apt-get install -yq ffmpeg
 
       - uses: actions/setup-python@v6
+        if: steps.pick.outputs.slug != ''
         with:
           python-version: "3.12"
 
       - uses: actions/setup-node@v5
+        if: steps.pick.outputs.slug != ''
         with:
           node-version: "22"
           cache: npm
           cache-dependency-path: engine/package-lock.json
 
       - name: Cache voice model + pip
+        if: steps.pick.outputs.slug != ''
         uses: actions/cache@v4
         with:
           path: |
@@ -76,68 +80,77 @@ jobs:
           key: voice-chatterbox-0.1.7-v1
 
       - name: Install audio tools
+        if: steps.pick.outputs.slug != ''
         run: pip install "edge-tts==7.3.1" numpy scipy
 
       - name: Install voice clone (Chatterbox, CPU)
-        if: ${{ inputs.voice != 'stock' }}
+        if: steps.pick.outputs.slug != '' && inputs.voice != 'stock'
         run: |
           python -m venv .venv-voice
           .venv-voice/bin/pip install "torch==2.6.0" "torchaudio==2.6.0" --index-url https://download.pytorch.org/whl/cpu
           .venv-voice/bin/pip install "chatterbox-tts==0.1.7"
 
       - name: Install renderer
+        if: steps.pick.outputs.slug != ''
         working-directory: engine
         run: npm ci --no-audit --no-fund
 
       # On failure, the tail of the log is posted as an annotation (visible on the run page and via the public API).
       - name: Build voice + music
+        if: steps.pick.outputs.slug != ''
         working-directory: engine
         env:
+          SLUG: ${{ steps.pick.outputs.slug }}
           REQUIRE_CLONE: ${{ inputs.voice != 'stock' && '1' || '' }}
           PYTHONUNBUFFERED: "1"
         run: |
           set -o pipefail
-          for s in ${{ steps.pick.outputs.slugs }}; do
-            echo "::group::audio $s"
-            if ! python scripts/build_audio.py "$s" 2>&1 | tee /tmp/audio.log; then
-              echo "::endgroup::"
-              msg=$(grep -vE 'Warning|warn\(|it/s\]|s/it\]' /tmp/audio.log | tail -n 30 | sed -e 's/%/%25/g' -e 's/\r//g' | sed ':a;N;$!ba;s/\n/%0A/g')
-              echo "::error title=Audio failed for $s::$msg"
-              exit 1
-            fi
-            echo "::endgroup::"
-          done
+          if ! python scripts/build_audio.py "$SLUG" 2>&1 | tee /tmp/audio.log; then
+            msg=$(grep -vE 'Warning|warn\(|it/s\]|s/it\]' /tmp/audio.log | tail -n 30 | sed -e 's/%/%25/g' -e 's/\r//g' | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error title=Audio failed for $SLUG::$msg"
+            exit 1
+          fi
 
-      - name: Render videos
+      - name: Render video
+        if: steps.pick.outputs.slug != ''
         working-directory: engine
+        env:
+          SLUG: ${{ steps.pick.outputs.slug }}
         run: |
           set -o pipefail
-          for s in ${{ steps.pick.outputs.slugs }}; do
-            echo "::group::render $s"
-            if ! node scripts/render.mjs "$s" 2>&1 | tee /tmp/render.log; then
-              echo "::endgroup::"
-              msg=$(grep -vE '^\s+at |Rendered|Encoded' /tmp/render.log | tail -n 30 | sed -e 's/%/%25/g' -e 's/\r//g' | sed ':a;N;$!ba;s/\n/%0A/g')
-              echo "::error title=Render failed for $s::$msg"
-              exit 1
-            fi
-            echo "::endgroup::"
-          done
+          if ! node scripts/render.mjs "$SLUG" 2>&1 | tee /tmp/render.log; then
+            msg=$(grep -vE '^\s+at |Rendered|Encoded' /tmp/render.log | tail -n 30 | sed -e 's/%/%25/g' -e 's/\r//g' | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error title=Render failed for $SLUG::$msg"
+            exit 1
+          fi
 
-      - name: Save videos back to the repo
+      - name: Save video back to the repo
+        if: steps.pick.outputs.slug != ''
+        env:
+          SLUG: ${{ steps.pick.outputs.slug }}
         run: |
           git config user.name "reel-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add out/*.mp4 || true
+          git add "out/$SLUG.mp4"
           git add reels/*/.clone 2>/dev/null || true   # cloned lines: unchanged lines aren't re-cloned next run
-          if git diff --cached --quiet; then echo "Nothing new."; exit 0; fi
-          git commit -m "Render: ${{ steps.pick.outputs.slugs }} [skip ci]"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          git commit -m "Render: $SLUG [skip ci]"
+          for i in 1 2 3; do git pull --rebase origin main && git push origin HEAD:main && break; sleep 5; done
 
-      - name: Also attach videos to this run
-        if: always()
+      - name: Mark as failed (so the queue moves on)
+        if: failure() && steps.pick.outputs.slug != ''
+        env:
+          SLUG: ${{ steps.pick.outputs.slug }}
+        run: |
+          git reset --hard -q && git pull -q origin main
+          echo "$SLUG" >> out/FAILED.txt
+          git config user.name "reel-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add out/FAILED.txt && git commit -m "Render failed: $SLUG [skip ci]" && git push origin HEAD:main
+
+      - name: Also attach the video to this run
+        if: always() && steps.pick.outputs.slug != ''
         uses: actions/upload-artifact@v5
         with:
-          name: reels
+          name: ${{ steps.pick.outputs.slug }}
           path: out/*.mp4
           if-no-files-found: ignore

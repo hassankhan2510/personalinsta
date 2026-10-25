@@ -1,21 +1,28 @@
 import React from "react";
 import { AbsoluteFill, Audio, staticFile } from "remotion";
 import { FontFaces, Grain, ramp, useT, Vignette } from "./components";
-import { Cta, Face, NumberCard, Photo, Title } from "./layouts";
+import { Chat, Cta, Face, NumberCard, Photo, Stat, Title, Versus } from "./layouts";
 import { Beat, C, Timeline } from "./theme";
 
 const Layout: React.FC<{ b: Beat; tl: Timeline }> = ({ b, tl }) => {
+  const first = tl.beats[0] === b;
   switch (b.layout) {
     case "face":
-      return <Face b={b} />;
+      return <Face b={b} first={first} />;
     case "title":
-      return <Title b={b} />;
+      return <Title b={b} first={first} />;
     case "number":
-      return <NumberCard b={b} tl={tl} />;
+      return <NumberCard b={b} first={first} tl={tl} />;
     case "photo":
-      return <Photo b={b} />;
+      return <Photo b={b} first={first} />;
+    case "stat":
+      return <Stat b={b} first={first} />;
+    case "chat":
+      return <Chat b={b} first={first} tl={tl} />;
+    case "versus":
+      return <Versus b={b} first={first} />;
     case "cta":
-      return <Cta b={b} />;
+      return <Cta b={b} first={first} />;
   }
 };
 

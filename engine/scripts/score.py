@@ -106,9 +106,11 @@ def make_mix(tl, public_dir, out_path):
     beats = tl["beats"]
     by_layout = lambda name: [b for b in beats if b["layout"] == name]
     nums, cta = by_layout("number"), by_layout("cta")
-    # The twist is whatever lands right after the list (unless that's already the end card).
-    after = beats.index(nums[-1]) + 1 if nums else len(beats)
-    twist = beats[after] if after < len(beats) and beats[after]["layout"] != "cta" else None
+    # The twist: marked in the script, else whatever lands right after the list.
+    twist = next((b for b in beats if b.get("twist")), None)
+    if twist is None and nums:
+        after = beats.index(nums[-1]) + 1
+        twist = beats[after] if after < len(beats) and beats[after]["layout"] != "cta" else None
     cta_t = cta[0]["from"] if cta else tl["total"] - 3
 
     # Dark minor pad under everything (Dm - Bb - F - C), one chord per bar at 112 bpm.
@@ -124,16 +126,25 @@ def make_mix(tl, public_dir, out_path):
     for b in beats[1:2]:
         put(tick(), b["start"], 0.5, send=0.4)
 
-    # List section: kick + hats on the grid, builds a little each item.
-    if nums:
-        a, z = nums[0]["from"] - 0.1, (twist["from"] - 0.25) if twist else nums[-1]["to"]
+    # Body: kick + hats from the second beat until the twist (or the end card), building as it goes.
+    if len(beats) > 2:
+        a = beats[1]["from"] - 0.1
+        z = (twist["from"] - 0.25) if twist else cta_t - 0.1
         g = np.arange(a, z, beat / 2)
         for j, tt in enumerate(g):
-            lift = 0.7 + 0.3 * (tt - a) / max(z - a, 1e-3)
+            lift = 0.65 + 0.35 * (tt - a) / max(z - a, 1e-3)
             if j % 2 == 0: put(kick(), tt, 0.8 * lift)
             put(hat(j % 4 == 3), tt, 0.25 * lift, pan=0.3 if j % 2 else -0.3)
-        for b in nums:
-            put(boom(0.9), b["start"], 0.55, send=0.4)
+        for b in beats[1:]:
+            if b is not twist and b["layout"] != "cta":
+                put(boom(0.9), b["start"], 0.5 if b["layout"] in ("number", "stat", "versus") else 0.3, send=0.4)
+
+    # Chat bubbles: a soft pop as each message lands (same timing as layouts.tsx bubbleTime).
+    for b in by_layout("chat"):
+        msgs = b.get("msgs") or []
+        for k, (who, _) in enumerate(msgs):
+            at = b["start"] + (b["end"] - b["start"]) * k / len(msgs)
+            put(tick(), at, 0.55 if who == "them" else 0.4, pan=-0.25 if who == "them" else 0.25, send=0.2)
 
     # Twist: the pulse drops out (silence = attention), then lands with a boom.
     if twist:

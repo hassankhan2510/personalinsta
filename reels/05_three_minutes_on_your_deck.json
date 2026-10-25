@@ -1,0 +1,25 @@
+{
+  "title": "Investors give your deck under 3 minutes",
+  "tail": 2.4,
+  "beats": [
+    { "id": "hook",  "gap": 0.15, "layout": "photo", "photo": "photos/hassan_stage.jpg", "chip": "PITCH DECKS", "big": true,
+      "text": "Investors spend under three minutes on your pitch deck.", "em": ["three", "minutes"] },
+    { "id": "stat",  "gap": 0.35, "layout": "versus",
+      "left": { "label": "DECKS THAT FAILED", "value": "1.5 min read" },
+      "right": { "label": "DECKS THAT RAISED", "value": "4+ min read" },
+      "split": 7,
+      "text": "Decks that didn't raise got ninety seconds. Decks that raised? Over four minutes.", "em": ["ninety", "four"] },
+    { "id": "turn",  "gap": 0.35, "layout": "title", "kicker": "SO",
+      "text": "Make these three slides impossible to skip.", "em": ["impossible"] },
+    { "id": "n1",    "gap": 0.35, "layout": "number", "num": "01", "label": "TRACTION", "kicker": "THE SLIDES THAT DECIDE IT",
+      "text": "One. Traction. One chart. Up and to the right.", "em": ["Up"] },
+    { "id": "n2",    "gap": 0.35, "layout": "number", "num": "02", "label": "TEAM", "kicker": "THE SLIDES THAT DECIDE IT",
+      "text": "Two. Team. Why you, in one line.", "em": ["you,"] },
+    { "id": "n3",    "gap": 0.35, "layout": "number", "num": "03", "label": "MARKET", "kicker": "THE SLIDES THAT DECIDE IT",
+      "text": "Three. Market. How big, with a source. Not a guess.", "em": ["source."] },
+    { "id": "twist", "gap": 0.65, "layout": "title", "kicker": "THE RULE", "twist": true,
+      "text": "If they have to search for your numbers, you've lost them.", "em": ["search", "lost"] },
+    { "id": "cta",   "gap": 0.40, "layout": "cta", "action": "SAVE THIS", "sub": "before your next pitch",
+      "text": "Save this before your next pitch.", "em": ["save"] }
+  ]
+}

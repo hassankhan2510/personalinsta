@@ -3,21 +3,21 @@
   "voice": "en-US-AndrewNeural",
   "rate": "+6%",
   "pitch": "-2Hz",
-  "tail": 2.8,
+  "tail": 2.4,
   "beats": [
     { "id": "hook",  "gap": 0.20, "layout": "face",   "photo": "photos/hassan_portrait.jpg",
       "text": "Investors don't fund ideas.", "em": ["don't", "ideas"] },
     { "id": "turn",  "gap": 0.35, "layout": "title",  "kicker": "SO WHAT DO THEY FUND?",
       "text": "Here's what they actually fund.", "em": ["actually"] },
-    { "id": "n1",    "gap": 0.40, "layout": "number", "num": "01", "label": "SPEED",
+    { "id": "n1",    "gap": 0.40, "layout": "number", "num": "01", "label": "SPEED", "kicker": "WHAT INVESTORS ACTUALLY FUND",
       "text": "One. Speed. What did you ship in the last thirty days?", "em": ["ship", "thirty"] },
-    { "id": "n2",    "gap": 0.40, "layout": "number", "num": "02", "label": "PROOF",
+    { "id": "n2",    "gap": 0.40, "layout": "number", "num": "02", "label": "PROOF", "kicker": "WHAT INVESTORS ACTUALLY FUND",
       "text": "Two. Proof. Someone using it. Or better, paying for it.", "em": ["paying"] },
-    { "id": "n3",    "gap": 0.40, "layout": "number", "num": "03", "label": "YOU",
+    { "id": "n3",    "gap": 0.40, "layout": "number", "num": "03", "label": "YOU", "kicker": "WHAT INVESTORS ACTUALLY FUND",
       "text": "Three. You. Why are you the one who wins this market?", "em": ["you", "wins"] },
-    { "id": "twist", "gap": 0.70, "layout": "photo",  "photo": "photos/hassan_stage.jpg", "chip": "THE PART NOBODY SAYS",
+    { "id": "twist", "gap": 0.70, "layout": "photo",  "photo": "photos/hassan_stage.jpg", "chip": "THE PART NOBODY SAYS", "big": true, "twist": true,
       "text": "Your idea is the least important slide in your deck.", "em": ["least", "important"] },
-    { "id": "cta",   "gap": 0.45, "layout": "cta", "sub": "Speaking · Sessions · Keynotes",
-      "text": "Bookings for next semester are open. Comment TALK.", "em": ["open", "talk"] }
+    { "id": "cta",   "gap": 0.45, "layout": "cta", "action": "FOLLOW", "sub": "More founders' files every week",
+      "text": "Follow for more founders' files.", "em": ["follow"] }
   ]
 }

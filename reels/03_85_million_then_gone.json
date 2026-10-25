@@ -1,0 +1,22 @@
+{
+  "title": "$85 million. Then gone.",
+  "tail": 2.4,
+  "beats": [
+    { "id": "hook",  "gap": 0.15, "layout": "stat", "value": "$85M", "label": "RAISED · AUGUST 2021",
+      "text": "Eighty five million dollars raised.", "em": ["Eighty", "five", "million"] },
+    { "id": "dead",  "gap": 0.30, "layout": "title", "kicker": "JULY 2022",
+      "text": "Eleven months later? Shut down.", "em": ["Shut", "down."] },
+    { "id": "file",  "gap": 0.35, "layout": "title", "kicker": "THE FILE",
+      "text": "This is Airlift. Pakistan's largest Series B, at the time.", "em": ["largest"] },
+    { "id": "n1",    "gap": 0.35, "layout": "number", "num": "01", "label": "PIVOT", "kicker": "WHAT HAPPENED",
+      "text": "One. They pivoted from buses to instant delivery.", "em": ["instant"] },
+    { "id": "n2",    "gap": 0.35, "layout": "number", "num": "02", "label": "SCALE", "kicker": "WHAT HAPPENED",
+      "text": "Two. More cities. Then another country.", "em": ["another", "country."] },
+    { "id": "n3",    "gap": 0.35, "layout": "number", "num": "03", "label": "WINTER", "kicker": "WHAT HAPPENED",
+      "text": "Three. Funding froze. The next round fell through.", "em": ["froze.", "fell"] },
+    { "id": "twist", "gap": 0.65, "layout": "photo", "photo": "photos/hassan_stage.jpg", "chip": "THE LESSON", "big": true, "twist": true,
+      "text": "Raising money isn't winning. It's buying time.", "em": ["buying", "time."] },
+    { "id": "cta",   "gap": 0.40, "layout": "cta", "action": "FOLLOW", "sub": "More founders' files every week",
+      "text": "Follow for more founders' files.", "em": ["follow"] }
+  ]
+}
