@@ -1,0 +1,127 @@
+name: Render reels
+
+# Push a reel script (reels/<slug>.json) -> GitHub clones the voice, renders the video and
+# commits out/<slug>.mp4 back to the repo. Or run it by hand from the Actions tab.
+on:
+  push:
+    branches: [main]
+    paths: ["reels/*.json", "engine/**", "voice/**", ".github/workflows/render.yml"]
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "Reel to render, e.g. 01_investors_dont_fund_ideas (blank = all reels)"
+        required: false
+        default: ""
+      voice:
+        description: "Voice"
+        type: choice
+        options: [clone, stock]
+        default: clone
+
+permissions:
+  contents: write
+
+concurrency:
+  group: render
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      HF_HUB_CACHE: ${{ github.workspace }}/.cache/hf/hub
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Pick reels to render
+        id: pick
+        env:
+          INPUT_SLUG: ${{ inputs.slug }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          all=$(ls reels/*.json | xargs -n1 basename | sed 's/\.json$//' | grep -v '_POST$' | tr '\n' ' ')
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            slugs="${INPUT_SLUG:-$all}"
+          elif [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ] \
+               || git diff --name-only "$BEFORE" HEAD | grep -qE '^(engine/|voice/|\.github/)'; then
+            slugs="$all"   # engine, voice or first push: everything
+          else
+            slugs=$(git diff --name-only "$BEFORE" HEAD -- 'reels/*.json' | xargs -rn1 basename | sed 's/\.json$//' | tr '\n' ' ')
+          fi
+          echo "slugs=$slugs" >> "$GITHUB_OUTPUT"
+          echo "Rendering: $slugs"
+
+      - name: System packages
+        run: sudo apt-get update -q && sudo apt-get install -yq ffmpeg
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: engine/package-lock.json
+
+      - name: Cache voice model + pip
+        uses: actions/cache@v4
+        with:
+          path: |
+            .cache/hf
+            ~/.cache/pip
+          key: voice-chatterbox-0.1.7-v1
+
+      - name: Install audio tools
+        run: pip install "edge-tts==7.3.1" numpy scipy
+
+      - name: Install voice clone (Chatterbox, CPU)
+        if: ${{ inputs.voice != 'stock' }}
+        run: |
+          python -m venv .venv-voice
+          .venv-voice/bin/pip install "torch==2.6.0" "torchaudio==2.6.0" --index-url https://download.pytorch.org/whl/cpu
+          .venv-voice/bin/pip install "chatterbox-tts==0.1.7"
+
+      - name: Install renderer
+        working-directory: engine
+        run: npm ci --no-audit --no-fund
+
+      - name: Build voice + music
+        working-directory: engine
+        run: |
+          for s in ${{ steps.pick.outputs.slugs }}; do
+            echo "::group::audio $s"
+            python scripts/build_audio.py "$s"
+            echo "::endgroup::"
+          done
+
+      - name: Render videos
+        working-directory: engine
+        run: |
+          for s in ${{ steps.pick.outputs.slugs }}; do
+            echo "::group::render $s"
+            node scripts/render.mjs "$s"
+            echo "::endgroup::"
+          done
+
+      - name: Save videos back to the repo
+        run: |
+          git config user.name "reel-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add out/*.mp4 || true
+          git add reels/*/.clone 2>/dev/null || true   # cloned lines: unchanged lines aren't re-cloned next run
+          if git diff --cached --quiet; then echo "Nothing new."; exit 0; fi
+          git commit -m "Render: ${{ steps.pick.outputs.slugs }} [skip ci]"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Also attach videos to this run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reels
+          path: out/*.mp4
+          if-no-files-found: ignore

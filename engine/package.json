@@ -1,0 +1,21 @@
+{
+  "name": "hassan-reels",
+  "private": true,
+  "description": "Personal-brand reel engine (Remotion). Locally node_modules may be a junction to theranos-doc/node_modules; on GitHub Actions it's installed from this file.",
+  "scripts": {
+    "audio": "python scripts/build_audio.py",
+    "studio": "remotion studio src/index.ts",
+    "render": "node scripts/render.mjs",
+    "still": "remotion still src/index.ts Reel"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.500",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.500"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.7",
+    "typescript": "5.9.3"
+  }
+}
