@@ -15,7 +15,7 @@ Set "engine": "edge" in the reel script to force the stock voice.
 Cloned lines are cached in ../reels/<slug>/.clone/ and only regenerated when their text changes.
 Word timings for non-edge beats are estimated from word length.
 """
-import asyncio, json, os, subprocess, sys, wave
+import asyncio, hashlib, json, os, subprocess, sys, wave
 
 import edge_tts
 import numpy as np
@@ -38,7 +38,8 @@ def clone_lines(spec, slug):
         return {}
     cache = os.path.join(REELS, slug, ".clone")
     os.makedirs(cache, exist_ok=True)
-    key = lambda b: f"{b['text']}|{os.path.getmtime(VOICE_REF)}"  # new sample -> regenerate everything
+    ref_hash = hashlib.sha1(open(VOICE_REF, "rb").read()).hexdigest()[:12]  # content, not mtime: CI checkouts reset mtimes
+    key = lambda b: f"{b['text']}|{ref_hash}"  # new sample -> regenerate everything
     done, todo = {}, []
     for b in spec["beats"]:
         wav, stamp = os.path.join(cache, f"{b['id']}.wav"), os.path.join(cache, f"{b['id']}.txt")
